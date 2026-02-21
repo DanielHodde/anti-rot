@@ -1,0 +1,120 @@
+name: AntiRot
+options:
+  bundleIdPrefix: com.daniel
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    DEVELOPMENT_TEAM: ""  # TODO: set to your Team ID from developer.apple.com/account
+
+targets:
+
+  AntiRot:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - AntiRot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.daniel.antirot
+        CODE_SIGN_ENTITLEMENTS: AntiRot/AntiRot.entitlements
+    capabilities:
+      appGroups:
+        groups:
+          - group.com.daniel.antirot
+    dependencies:
+      - target: DeviceActivityMonitorExtension
+      - target: ShieldConfigurationExtension
+      - target: ShieldActionHandlerExtension
+    info:
+      path: AntiRot/Info.plist
+      properties:
+        CFBundleDisplayName: Anti-Rot
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Editor
+            CFBundleURLSchemes:
+              - antirot
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+
+  DeviceActivityMonitorExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: DeviceActivityMonitorExtension
+        excludes:
+          - "*.entitlements"
+      # Shared model files compiled into this target too (no duplication needed)
+      - path: AntiRot/Models/TimeWindow.swift
+      - path: AntiRot/Models/OverrideState.swift
+      - path: AntiRot/Services/SharedStorage.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.daniel.antirot.monitor
+        CODE_SIGN_ENTITLEMENTS: DeviceActivityMonitorExtension/DeviceActivityMonitorExtension.entitlements
+    capabilities:
+      appGroups:
+        groups:
+          - group.com.daniel.antirot
+    info:
+      path: DeviceActivityMonitorExtension/Info.plist
+      properties:
+        CFBundleDisplayName: DeviceActivityMonitorExtension
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivity.monitor
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).DeviceActivityMonitorExtension
+
+  ShieldConfigurationExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: ShieldConfigurationExtension
+        excludes:
+          - "*.entitlements"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.daniel.antirot.shieldconfig
+        CODE_SIGN_ENTITLEMENTS: ShieldConfigurationExtension/ShieldConfigurationExtension.entitlements
+    capabilities:
+      appGroups:
+        groups:
+          - group.com.daniel.antirot
+    info:
+      path: ShieldConfigurationExtension/Info.plist
+      properties:
+        CFBundleDisplayName: ShieldConfigurationExtension
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.managedsettings.shieldconfiguration
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShieldConfigurationExtension
+
+  ShieldActionHandlerExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: ShieldActionHandlerExtension
+        excludes:
+          - "*.entitlements"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.daniel.antirot.shieldaction
+        CODE_SIGN_ENTITLEMENTS: ShieldActionHandlerExtension/ShieldActionHandlerExtension.entitlements
+    capabilities:
+      appGroups:
+        groups:
+          - group.com.daniel.antirot
+    info:
+      path: ShieldActionHandlerExtension/Info.plist
+      properties:
+        CFBundleDisplayName: ShieldActionHandlerExtension
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.managedsettings.shieldaction
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShieldActionHandlerExtension
